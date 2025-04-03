@@ -1,0 +1,57 @@
+section. data
+    msg db "ingresa un numero", 0
+    msg1 db "a no es primo", 0
+    msg2 db "a es primo", 0
+
+section .text
+    global _start
+    %include "io.asm"
+
+_start:
+    sub esp, 12
+    mov esi, msg2
+    call print_str
+    call scan_num
+    mov [esp], eax
+    mov [esp+4], 2
+    mov [esp+8], 3
+    div [esp+4]
+    cmp dl, 0
+    jne .else1
+    mov esi, msg1
+    call print_str
+    mov eax, [esp]
+    jmp. fin
+
+.else1:
+    mov eax, [esp]
+    cmp [esp+8], eax
+    jb .while
+    cmp [esp+8], eax
+    jae .si_es_primo
+    jmp .fin
+    
+.while:
+    div [esp+8]
+    cmp dl, 0
+    je .si_cond
+    add [esp+8], 2
+    jmp .fin
+    
+.si_cond:
+    mov esi, msg1
+    call print_str
+    mov eax, [esp]
+    jmp .fin
+
+.si_es_primo:
+    mov esi, msg2
+    call print_str
+    jmp .fin
+
+.fin:
+    add esp, 12
+    mov eax, 1
+    xor ebx, ebx
+    int 0x80
+    
